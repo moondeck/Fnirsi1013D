@@ -1,1 +1,0 @@
-The schema and flash file is stm32f103c8t6. Please note that it is not yet possible to restore the original file that is in EF2.

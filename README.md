@@ -1,30 +1,12 @@
-Fnirsi1013D
-Oscilloscope  FNIRSI1013D alternative opensource firmware
+*** Fnirsi1013D alternative firmwware
 
-PLEASE download GUIDE for firmvare and read manual. (download manual, loader 1.1.3 and latest firmware)
+Based on work done by Atlan4, pecostm32 and others. Thank you!
 
-No one is responsible for anything, you do everything at your own risk.
+This serves as a base for my own modifications and improvements to the firmware done by Atlan4. It is based on the 1.00o5 from his repository.
 
-More information can be found in the manual.
+I will try to keep it up to date with the latest improvements and bugfixes from the original repository, when it is possible for me.
+Mostly however, it is a base for my own use - use it if you'd like, or don't :D
 
-Everything is described on the pages https://www.eevblog.com/forum/testgear/fnirsi-1013d-100mhz-tablet-oscilloscope/msg5172177/#msg5172177
+I have attempted to take the original code and create more structure in the organisation of the source, I will eventually try to also document relevant parts and how things fit together.
 
-The RTC module is not required for the function of the alternative software. The RTC module does not include an oscilloscope, it must be installed additionally.  And it is disabled by default.
-
-In case of problems with the touch screen, see this: configuration_file.txt
-
-To upload the firmware under Windows, download the LOADER.zip file, unzip it and run it. Turn on the oscilloscope, connect the USB cable, select the option to turn on USB in the oscilloscope menu. After about 10 seconds, windows will recognize the device and open a window with folders. Now in the loader program, select the BIN you want to load. Upload it to the device, touch the screen to turn off the usb, and turn off the oscilloscope.
-
-https://www.youtube.com/watch?v=LVI45oJHTK8
-
-CALIBRATION
-Follow the instructions for calibration.  You must have the notification confirmation option turned on. Calibrate without usb and probes.  In the next step, when prompted, connect the required voltage to both channels at once.  After finishing the calibration, close the menu and turn off the oscilloscope to save the data.
-
-Loader allows you to return the oscilloscope card to the previous firmware, the new firmware is stored only on the SD card, where the original is loaded in the flash of the device.
-The safe solution is to use another SD card. Upload the firmware there, and insert the cards in the device.
-
-
-Original source https://github.com/pecostm32/FNIRSI_1013D_Firmware
-
-modify 1014d startup for 1013d.zip it is used to edit the bootloader in the 1014d folder, makes adjustments and modifies the 1013d .bin in the 1013 folder. the bootloader in the 1014d folder is modified for the oscilloscope 1013d, added touch display support, removed uart for 1014
-
+PLEASE refer to the original repo for instructions on how to use, for now.
