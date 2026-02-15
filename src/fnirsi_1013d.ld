@@ -9,7 +9,7 @@ SECTIONS
   PRGM_START = .;
   .text : 
   {
-    build/Debug/GNU_ARM-Linux/start.o (.text)
+    build/start.o (.text)
     *(.text);
   } >ram
 
