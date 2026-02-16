@@ -16,7 +16,7 @@
 //Version info
 //----------------------------------------------------------------------------------------------------------------------------------
 
-#define VERSION_STRING             "v1.00o5" //fix EF2 circle buffer to 6144, add text in diagnostic screen
+#define VERSION_STRING             "v1.0.0" //fix EF2 circle buffer to 6144, add text in diagnostic screen
 
 #define VERSION_STRING_XPOS             698//690//681     //690 
 #define VERSION_STRING_YPOS              24
