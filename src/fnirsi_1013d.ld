@@ -6,7 +6,7 @@ MEMORY
 SECTIONS
 {
   . = ORIGIN(ram);
-  PRGM_START = .;
+  _start = .;
   .text : 
   {
     build/start.o (.text)
@@ -20,12 +20,12 @@ SECTIONS
   } >ram
   PRGM_END = .;
 
-  BSS_START = .;
+  __bss_start__ = .;
   .bss : 
   {
     *(.bss);
   } >ram
-  BSS_END = .;
+  __bss_end__ = .;
 }
 
-__program_size = PRGM_END - PRGM_START;
+__program_size = PRGM_END - _start;

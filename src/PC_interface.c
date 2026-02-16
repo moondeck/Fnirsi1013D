@@ -275,7 +275,7 @@ void usb_CDC_process_rx(void)
 }
 
 /*
- if(strcmp(cmd_buf, "#ECHO") == 0)
+ if(my_strcmp(cmd_buf, "#ECHO") == 0)
 {
     char msg[64];
     sprintf(msg, "Run state: %d, CH2: %d, TimeZoom: %d\r\n",
@@ -359,42 +359,10 @@ void usb_send_uint(const char *label, uint32_t v)
 //******************************************************************************
 
 //Simple strstr replacement: find substring within string
-const char *my_strstr(const char *haystack, const char *needle)
-{
-  if (!*needle) return haystack; // Empty substring always matches
-
-  const char *p1 = haystack;
-  while (*p1)
-  {
-    const char *p1_begin = p1;
-    const char *p2 = needle;
-
-    // Compare characters
-    while (*p1 && *p2 && (*p1 == *p2))
-    {
-      p1++;
-      p2++;
-    }
-
-    if (!*p2) return p1_begin; // Found match
-
-    p1 = p1_begin + 1; // Move to next position
-  }
-
-  return 0; // Not found
-}
+// Using stdlib strstr instead
 
 //-----------------------------------------------------------------
-
-int my_strcmp(const char *s1, const char *s2)
-{
-  while (*s1 && (*s1 == *s2)) 
-  {
-    s1++;
-    s2++;
-  }
-  return *(const unsigned char *)s1 - *(const unsigned char *)s2;
-}
+// Using stdlib strcmp instead
 
 char *my_strrchr(const char *s, int c)
 {
@@ -406,47 +374,8 @@ char *my_strrchr(const char *s, int c)
     return (char*)last;
 }
 
-char *my_strcpy(char *dest, const char *src)
-{
-    char *d = dest;
-    while ((*d++ = *src++));
-    return dest;
-}
+// Using stdlib strcpy, strcat, strlen, strncpy instead
 
-char *my_strncpy(char *dest, const char *src, int n)
-{
-    int i;
-    for (i = 0; i < n && src[i]; i++) dest[i] = src[i];
-    for (; i < n; i++) dest[i] = '\0';
-    return dest;
-}
-
-// pripojí src na koniec dst
-char *my_strcat(char *dst, const char *src)
-{
-    char *p = dst;
-
-    // nájdi koniec dst
-    while (*p) p++;
-
-    // skopíruj src na koniec dst
-    while (*src) {
-        *p++ = *src++;
-    }
-
-    *p = 0; // null-terminátor
-    return dst;
-}
-
-
-int my_strlen(const char *s)
-{
-    int len = 0;
-    while (*s++) len++;
-    return len;
-}
-
-// Simple sprintf for path joining (no formatting)
 void my_sprintf_path(char *dst, const char *folder, const char *fname)
 {
     while (*folder) *dst++ = *folder++;

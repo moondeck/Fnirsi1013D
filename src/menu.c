@@ -12,6 +12,7 @@
 #include "display_lib.h"
 #include "ff.h"
 #include "DS3231.h"
+#include "cdc_class.h"
 
 #include "usb_interface.h"
 #include "PC_interface.h"
@@ -21,7 +22,24 @@
 #include "sin_cos_math.h"
 
 #include <string.h>
+#include <stdlib.h>
 //----------------------------------------------------------------------------------------------------------------------------------
+
+typedef struct {
+  struct coordinate {
+    uint16 x;
+    uint16 y;
+  } pos;
+  struct size {
+    uint16 width;
+    uint16 height;
+  } size;
+
+  uint32_t color;
+  char text[20];
+
+} Button;
+
 
 void scope_setup_display_lib(void)
 {
@@ -2189,7 +2207,7 @@ void wdt_enable_clock(void)
     BUS_CLK_GATING0 |= (1 << 31);
     BUS_SOFT_RST0   |= (1 << 31);
     
-    usb_send_uint("BUS_SOFT_RST0 =  ", BUS_SOFT_RST0); usb_send_uint("CLK_GATING0 =  ", BUS_CLK_GATING0); usb_CDC_in_ep_callback();
+    usb_send_uint("BUS_SOFT_RST0 =  ", BUS_SOFT_RST0); usb_send_uint("CLK_GATING0 =  ", BUS_CLK_GATING0);
 
 
             
@@ -6710,7 +6728,7 @@ void gen_ampl_select(void)
   
 
   make_volt_to_long_text(buffer, fpgasettings.gen_ampl);
-  //my_strcat(buffer, " V");
+  //strcat(buffer, " V");
   display_text(GEN_MENU_XPOS + 80, GEN_MENU_YPOS + 244, buffer);//+3 //68 //80
 
   //Display the normal text
@@ -6744,7 +6762,7 @@ void gen_offset_select(void)
         //fpgasettings.gen_offset=f;
         
   make_volt_to_long_text(buffer, fpgasettings.gen_offset);
-  //my_strcat(buffer, " V");
+  //strcat(buffer, " V");
   display_text(GEN_MENU_XPOS + 80, GEN_MENU_YPOS + 300, buffer);//68-300
 
   //Display the normal text
@@ -6778,7 +6796,7 @@ void gen_phase_select(void)
   //fpgasettings.gen_phase=k;
       
   make_value_to_text(buffer, fpgasettings.gen_phase, 176); //176 is °
-  //my_strcat(buffer, " p");
+  //strcat(buffer, " p");
   display_text(GEN_MENU_XPOS + 100, GEN_MENU_YPOS + 356, buffer);//68 //85
   
 
@@ -9445,26 +9463,26 @@ void make_freq_to_text(char *dst, uint32 f)
   if (f < 1000) 
   {
     // Hz
-    my_uint_to_str(buf, f);
-    my_strcpy(dst, buf);
-    my_strcat(dst, "Hz");
+    utoa(f, buf, 10);
+    strcpy(dst, buf);
+    strcat(dst, "Hz");
   } 
     else if (f < 1000000) 
     {
       // kHz
       uint32 k = f / 1000;
       uint32 r = f % 1000; // zvyšok pre desatiny
-      my_uint_to_str(buf, k);
-      my_strcpy(dst, buf);
+      utoa(k, buf, 10);
+      strcpy(dst, buf);
         
-      int len = my_strlen(dst); // pozícia konca stringu
+      int len = strlen(dst); // pozícia konca stringu
       dst[len++] = '.';          // bodka
       dst[len++] = '0' + (r / 100);       // prvá desatina
       //dst[len++] = '0' + ((r/10)%10);    // druhá
       //dst[len++] = '0' + (r % 10);       // tretia
       dst[len] = 0;  
 
-      my_strcat(dst, "kHz");
+      strcat(dst, "kHz");
     } 
       else 
       {
@@ -9472,10 +9490,10 @@ void make_freq_to_text(char *dst, uint32 f)
         uint32_t k = f / 1000000;
         uint32_t r = f % 1000000; // zvyšok pre desatiny
 
-        my_uint_to_str(buf, k);
-        my_strcpy(dst, buf);
+        utoa(k, buf, 10);
+        strcpy(dst, buf);
 
-        int len = my_strlen(dst); // pozícia konca stringu
+        int len = strlen(dst); // pozícia konca stringu
         dst[len++] = '.';          // bodka
         dst[len++] = '0' + (r / 100000);        // prvá desatina
         dst[len++] = '0' + ((r / 10000) % 10);  // druhá
@@ -9485,7 +9503,7 @@ void make_freq_to_text(char *dst, uint32 f)
         //dst[len++] = '0' + (r % 10);            // šiesta
         dst[len] = 0;
 
-        my_strcat(dst, "MHz");
+        strcat(dst, "MHz");
       }
   
   // Center text alignment
@@ -9503,26 +9521,26 @@ void make_freq_to_long_text(char *dst, uint32 f)
   if (f < 1000) 
   {
     // Hz
-    my_uint_to_str(buf, f);
-    my_strcpy(dst, buf);
-    my_strcat(dst, "Hz");
+    utoa(f, buf, 10);
+    strcpy(dst, buf);
+    strcat(dst, "Hz");
   } 
     else if (f < 1000000) 
     {
       // kHz
       uint32 k = f / 1000;
       uint32 r = f % 1000; // zvyšok pre desatiny
-      my_uint_to_str(buf, k);
-      my_strcpy(dst, buf);
+      utoa(k, buf, 10);
+      strcpy(dst, buf);
         
-      int len = my_strlen(dst); // pozícia konca stringu
+      int len = strlen(dst); // pozícia konca stringu
       dst[len++] = '.';          // bodka
       dst[len++] = '0' + (r / 100);       // prvá desatina
       dst[len++] = '0' + ((r/10)%10);    // druhá
       dst[len++] = '0' + (r % 10);       // tretia
       dst[len] = 0;  
 
-      my_strcat(dst, "kHz");
+      strcat(dst, "kHz");
     } 
       else 
       {
@@ -9530,10 +9548,10 @@ void make_freq_to_long_text(char *dst, uint32 f)
         uint32_t k = f / 1000000;
         uint32_t r = f % 1000000; // zvyšok pre desatiny
 
-        my_uint_to_str(buf, k);
-        my_strcpy(dst, buf);
+        utoa(k, buf, 10);
+        strcpy(dst, buf);
 
-        int len = my_strlen(dst); // pozícia konca stringu
+        int len = strlen(dst); // pozícia konca stringu
         dst[len++] = '.';          // bodka
         dst[len++] = '0' + (r / 100000);        // prvá desatina
         dst[len++] = '0' + ((r / 10000) % 10);  // druhá
@@ -9543,7 +9561,7 @@ void make_freq_to_long_text(char *dst, uint32 f)
         dst[len++] = '0' + (r % 10);            // šiesta
         dst[len] = 0;
 
-        my_strcat(dst, "MHz");
+        strcat(dst, "MHz");
       }
   
   // Center text alignment
@@ -9562,11 +9580,13 @@ void make_value_to_text(char *dst, uint32 d, char c)
   dst[0] = 0;         // clear buffer
 
   // %
-  my_uint_to_str(buf, d);
-  my_strcpy(dst, buf);
+  display_text(50,50,"I Fail here!");
+
+  utoa(d, buf, 10);
+  strcpy(dst, buf);
   
-  my_strcat(dst, tmp);
-  //my_strcat(dst, "%");
+  strcat(dst, tmp);
+  //strcat(dst, "%");
 
   // Right text alignment
   //centering_text(dst, 4);
@@ -9584,26 +9604,26 @@ void make_volt_to_long_text(char *dst, uint32 f)
   if (f < 1000) 
   {
     // Hz
-    my_uint_to_str(buf, f);
-    my_strcpy(dst, buf);
-    my_strcat(dst, "mV");
+    utoa(f, buf, 10);
+    strcpy(dst, buf);
+    strcat(dst, "mV");
   } 
     else if (f < 1000000) 
     {
       // kHz
       uint32 k = f / 1000;
       uint32 r = f % 1000; // zvyšok pre desatiny
-      my_uint_to_str(buf, k);
-      my_strcpy(dst, buf);
+      utoa(k, buf, 10);
+      strcpy(dst, buf);
         
-      int len = my_strlen(dst); // pozícia konca stringu
+      int len = strlen(dst); // pozícia konca stringu
       dst[len++] = '.';          // bodka
       dst[len++] = '0' + (r / 100);       // prvá desatina
       dst[len++] = '0' + ((r/10)%10);    // druhá
       dst[len++] = '0' + (r % 10);       // tretia
       dst[len] = 0;  
 
-      my_strcat(dst, "V");
+      strcat(dst, "V");
     } 
       else 
       {
@@ -9611,10 +9631,10 @@ void make_volt_to_long_text(char *dst, uint32 f)
         uint32_t k = f / 1000000;
         uint32_t r = f % 1000000; // zvyšok pre desatiny
 
-        my_uint_to_str(buf, k);
-        my_strcpy(dst, buf);
+        utoa(k, buf, 10);
+        strcpy(dst, buf);
 
-        int len = my_strlen(dst); // pozícia konca stringu
+        int len = strlen(dst); // pozícia konca stringu
         dst[len++] = '.';          // bodka
         dst[len++] = '0' + (r / 100000);        // prvá desatina
         dst[len++] = '0' + ((r / 10000) % 10);  // druhá
@@ -9624,10 +9644,10 @@ void make_volt_to_long_text(char *dst, uint32 f)
         dst[len++] = '0' + (r % 10);            // šiesta
         dst[len] = 0;
 
-        //my_strcat(dst, "MHz");
+        //strcat(dst, "MHz");
       }
    
-  //my_strcat(dst, tmp);
+  //strcat(dst, tmp);
   // Center text alignment
   //centering_text(dst, 12);
   align_text(dst, 12, 1);
@@ -9637,7 +9657,7 @@ void make_volt_to_long_text(char *dst, uint32 f)
 /*
 void centering_text(char *dst, uint8 width)
 {
-  int len = my_strlen(dst);
+  int len = strlen(dst);
   if (len >= width) return;
 
   int shift = width - len;
@@ -9653,7 +9673,7 @@ void align_text(char *dst, uint8 width, uint8 mode)
 {
   //ALIGN_LEFT = 0,  ALIGN_CENTER = 1, ALIGN_RIGHT = 2
               
-    int len = my_strlen(dst); 
+    int len = strlen(dst); 
     if (len >= width){dst[width] = 0;return;} // if the text is longer, we cut it off
 
     int left_spaces = 0;

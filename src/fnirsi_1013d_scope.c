@@ -41,7 +41,7 @@ extern IRQHANDLERFUNCION interrupthandlers[];
 int main(void)
 {
   //Initialize data in BSS section
-  memset(&BSS_START, 0, &BSS_END - &BSS_START);
+  memset(&__bss_start__, 0, &__bss_end__ - &__bss_start__);
 
   //Initialize the clock system
   sys_clock_init();
@@ -169,10 +169,12 @@ int main(void)
   fpga_set_translated_brightness();
   
   //load picture startup logo
-  load_picture("scope.bmp");
+  //load_picture("scope.bmp");
   //if (!dev_mode) timer0_delay(3000);//2000
   
   //View message if load a default configuration in case of settings
+  display_set_fg_color(RED_COLOR);
+  display_set_font(&font_3);
   if (restore) scope_setup_restore_screen();
   
   //Set battery level to max for next calculations
@@ -182,7 +184,10 @@ int main(void)
   scope_set_maxlight(scopesettings.maxlight);       //1 set max, 0 user value
   
   //Setup the main parts of the screen
+
   scope_setup_main_screen();
+  display_text(50,50,"I Fail here!");
+
   
   //Modification on 09-03-2022. Begin
   //Clear the sample memory

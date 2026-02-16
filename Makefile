@@ -6,9 +6,9 @@ OBJDIR = build
 
 # Match Debug configuration flags (see nbproject/Makefile-Debug.mk)
 CFLAGS_BASE = -Wall -Wno-write-strings -Wno-char-subscripts -fno-stack-protector \
-	-DNO_STDLIB=1 -mcpu=arm926ej-s -O3 -mfloat-abi=soft
+	-DMALLOC_PROVIDED -mcpu=arm926ej-s -O3 -mfloat-abi=soft
 ASFLAGS = -x assembler-with-cpp -c -O0 -mcpu=arm926ej-s -mthumb -Wall -fmessage-length=0
-LDFLAGS = -T ./src/fnirsi_1013d.ld -nostdlib -lgcc
+LDFLAGS = -T ./src/fnirsi_1013d.ld -nostdlib -lc -lgcc
 
 CFLAGS = $(CFLAGS_BASE) -I include
 
@@ -47,7 +47,8 @@ SRCS_C = \
 	src/timer.c \
 	src/touchpanel.c \
 	src/usb_interface.c \
-	src/variables.c
+	src/variables.c \
+	src/syscalls.c
 
 SRCS_S = \
 	asm/memcmp.s \
