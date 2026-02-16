@@ -40,11 +40,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Install ARM toolchain
-      uses: carlosperate/arm-none-eabi-gcc-action@v1
-    
-    - name: Build firmware
-      run: make all
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: firmware-binary
+        path: ./build
     
     - name: Create Release and Upload Assets
       uses: softprops/action-gh-release@v1
